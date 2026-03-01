@@ -1,0 +1,11 @@
+# Large model files
+models/sarima_model.pkl
+
+# Python cache
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Environment
+.env
+venv/
