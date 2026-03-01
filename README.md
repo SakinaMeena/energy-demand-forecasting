@@ -51,11 +51,9 @@ energy-forecasting/
 **Source:** [PJM Hourly Energy Consumption](https://www.kaggle.com/datasets/robikscube/hourly-energy-consumption)
 — Kaggle
 
-**Region:** PJM East (PJME) — covers the Mid-Atlantic United States including
-parts of New Jersey, Delaware, Maryland, Virginia, and Washington D.C.
+**Region:** PJM East (PJME) — covers the Mid-Atlantic United States including parts of New Jersey, Delaware, Maryland, Virginia, and Washington D.C.
 
-**Coverage:** January 2002 to August 2018 — 145,362 hourly observations after
-removing 4 duplicate timestamps caused by daylight saving time transitions.
+**Coverage:** January 2002 to August 2018 — 145,362 hourly observations after removing 4 duplicate timestamps caused by daylight saving time transitions.
 
 **Target variable:** PJME_MW — estimated energy consumption in Megawatts.
 
@@ -79,15 +77,18 @@ demand patterns:
 
 **Annual cycle** — bimodal peaks in winter (January to March) driven by heating load and summer (July to September) driven by air conditioning load. The summer peak consistently exceeds the winter peak, with August recording the annual maximum.
 Spring and autumn shoulder seasons produce demand troughs as mild temperatures reduce both heating and cooling requirements.
+![Annual Demand Pattern](images/annual_pattern.png)
 
 **Weekly cycle** — weekday consumption is consistently higher than weekend
 consumption, reflecting reduced commercial and industrial activity on Saturdays and Sundays.
+![Weekly Demand Pattern](images/weekly_pattern.png)
 
 **Daily cycle** — a dual-peak pattern within each 24-hour period, with a morning rise as commercial activity begins and an evening peak around 18:00 as residential and commercial demand converge.
 
 The Augmented Dickey-Fuller test returned an ADF statistic of -19.89 against a 1% critical value of -3.43 with a p-value of 0.00, confirming stationarity at all significance levels. No differencing was required prior to modelling.
 
 ACF and PACF analysis confirmed strong short-term autocorrelation with a dominant 24-hour seasonal cycle, directly informing both the SARIMA configuration and the feature engineering strategy.
+![ACF and PACF](images/acf_pacf.png)
 
 ### Phase 2 — Feature Engineering
 
@@ -131,6 +132,7 @@ Feature importance analysis produced a clear hierarchy directly validating the E
 | cos_24_1 | 3.9% |
 
 lag_1 alone drives 65.4% of predictive power, confirming that the dominant PACF spike at lag 1 identified during EDA represented the strongest predictive signal in the data. The engineered features gave XGBoost the contextual precision to track both demand peaks and troughs accurately across the full 19-month test period, achieving a MAPE of 0.78%.
+![Feature Importance](images/feature_importance.png)
 
 **Layer 3 — LSTM Neural Network**
 
@@ -138,6 +140,7 @@ A two-layer stacked LSTM with hidden size 128 and dropout 0.2, trained on slidin
 207,489 trainable parameters. Trained for 20 epochs on a T4 GPU with gradient clipping (max norm 1.0) and a ReduceLROnPlateau scheduler.
 
 Training loss declined consistently from 0.016 at epoch 1 to 0.00046 at epoch 20 with no overfitting signal — validation loss tracked training loss throughout, confirming the regularisation strategy was effective.
+![LSTM Training Curves](images/train_curve.png)
 
 Visual analysis revealed a characteristic asymmetry — the LSTM tracks demand peaks confidently across both winter and summer extremes but slightly overshoots overnight troughs, reflecting the sequential memory weighting sustained patterns more heavily than sharp momentary dips. The LSTM underperforms XGBoost on this dataset because energy demand follows strong regular patterns that explicit engineered features capture more precisely than learned sequential representations. On datasets with
 irregular or difficult-to-encode temporal patterns the LSTM architecture would be expected to outperform feature-based approaches.
@@ -166,6 +169,7 @@ XGBoost with domain-informed feature engineering outperforms a deep learning
 approach on this structured tabular time series, demonstrating that architectural complexity does not guarantee superior performance when the problem structure is well understood. The 91.4% improvement over SARIMA is driven primarily by lag_1 — a single engineered feature that gives the model direct access to the most recent observation, something a pure statistical model trained on a short window cannot replicate.
 
 The progression from SARIMA to XGBoost to LSTM illustrates a central principle in applied forecasting: understand the data structure first, engineer features that encode it explicitly, then evaluate whether additional model complexity provides genuine improvement.
+![Model Comparison](images/model_comparison.png)
 
 ---
 
