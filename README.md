@@ -2,6 +2,10 @@
 
 A production-grade time series forecasting pipeline built on 16.5 years of hourly energy consumption data from the PJM East region of the US electrical grid. The system compares three model families of increasing sophistication — a statistical baseline, a gradient boosting model, and a deep learning sequential model — and deploys the best performer with calibrated uncertainty quantification through an interactive Streamlit application.
 
+## Live Demo
+
+[Launch App](https://energy-demand-forecasting-c2b7aazjyyqw3gvzr932dn.streamlit.app/)
+
 ---
 
 ## Results Summary
