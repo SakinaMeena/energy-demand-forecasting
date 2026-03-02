@@ -4,7 +4,7 @@ A production-grade time series forecasting pipeline built on 16.5 years of hourl
 
 ## Live Demo
 
-[Launch App](https://energy-demand-forecasting-c2b7aazjyyqw3gvzr932dn.streamlit.app/)
+https://energy-demand-forecasting-7tz6eb8scj6ctet4d4kztu.streamlit.app/
 
 ---
 
